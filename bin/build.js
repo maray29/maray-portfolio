@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { glsl } from 'esbuild-plugin-glsl';
 import { readdirSync } from 'fs';
 import { join, sep } from 'path';
 
@@ -26,6 +27,11 @@ const context = await esbuild.context({
   define: {
     SERVE_ORIGIN: JSON.stringify(SERVE_ORIGIN),
   },
+  plugins: [
+    glsl({
+      minify: true,
+    }),
+  ],
 });
 
 // Build files in prod

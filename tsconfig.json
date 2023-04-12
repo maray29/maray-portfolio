@@ -8,4 +8,5 @@
     },
     "types": ["@finsweet/ts-utils"]
   }
+  // "include": ["types/**/*"]
 }
