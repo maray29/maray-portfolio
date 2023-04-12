@@ -4,12 +4,18 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 
 import EffectShell from './EffectShell.js';
+import fragmentShader from './shaders/fragmentShader.glsl';
+import vertexShader from './shaders/vertexShader.glsl';
 
 export class RGBShiftEffect extends EffectShell {
   constructor(
     container = document.querySelector('.canvas-container'),
     itemsWrapper = null,
-    options = {}
+    options = {},
+    mouse = {
+      x: 0,
+      y: 0,
+    }
   ) {
     super(container, itemsWrapper);
     if (!this.container || !this.itemsWrapper) return;
@@ -43,37 +49,39 @@ export class RGBShiftEffect extends EffectShell {
     };
     this.material = new THREE.ShaderMaterial({
       uniforms: this.uniforms,
-      vertexShader: `
-          uniform vec2 uOffset;
-          varying vec2 vUv;
-          vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
-            float M_PI = 3.1415926535897932384626433832795;
-            position.x = position.x + (sin(uv.y * M_PI) * offset.x);
-            position.y = position.y + (sin(uv.x * M_PI) * offset.y);
-            return position;
-          }
-          void main() {
-            vUv = uv;
-            vec3 newPosition = position;
-            newPosition = deformationCurve(position,uv,uOffset);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-          }
-        `,
-      fragmentShader: `
-          uniform sampler2D uTexture;
-          uniform float uAlpha;
-          uniform vec2 uOffset;
-          varying vec2 vUv;
-          vec3 rgbShift(sampler2D texture1, vec2 uv, vec2 offset) {
-            float r = texture2D(uTexture,vUv + uOffset).r;
-            vec2 gb = texture2D(uTexture,vUv).gb;
-            return vec3(r,gb);
-          }
-          void main() {
-            vec3 color = rgbShift(uTexture,vUv,uOffset);
-            gl_FragColor = vec4(color,uAlpha);
-          }
-        `,
+      // vertexShader: `
+      //     uniform vec2 uOffset;
+      //     varying vec2 vUv;
+      //     vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
+      //       float M_PI = 3.1415926535897932384626433832795;
+      //       position.x = position.x + (sin(uv.y * M_PI) * offset.x);
+      //       position.y = position.y + (sin(uv.x * M_PI) * offset.y);
+      //       return position;
+      //     }
+      //     void main() {
+      //       vUv = uv;
+      //       vec3 newPosition = position;
+      //       newPosition = deformationCurve(position,uv,uOffset);
+      //       gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+      //     }
+      //   `,
+      // fragmentShader: `
+      //     uniform sampler2D uTexture;
+      //     uniform float uAlpha;
+      //     uniform vec2 uOffset;
+      //     varying vec2 vUv;
+      //     vec3 rgbShift(sampler2D texture1, vec2 uv, vec2 offset) {
+      //       float r = texture2D(uTexture,vUv + uOffset).r;
+      //       vec2 gb = texture2D(uTexture,vUv).gb;
+      //       return vec3(r,gb);
+      //     }
+      //     void main() {
+      //       vec3 color = rgbShift(uTexture,vUv,uOffset);
+      //       gl_FragColor = vec4(color,uAlpha);
+      //     }
+      //   `,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
       transparent: true,
     });
     this.plane = new THREE.Mesh(this.geometry, this.material);
@@ -91,7 +99,12 @@ export class RGBShiftEffect extends EffectShell {
     const centerX = 0;
     const centerY = 0;
 
-    this.position = new THREE.Vector3(centerX, centerY, 0);
+    // project mouse position to world coodinates
+    // let x = this.mouse.x.map(-1, 1, -this.viewSize.width / 2, this.viewSize.width / 2);
+    // let y = this.mouse.y.map(-1, 1, -this.viewSize.height / 2, this.viewSize.height / 2);
+
+    // this.position = new THREE.Vector3(this.mouse.x, this.mouse.y, 0);
+    // this.position = new THREE.Vector3(centerX, centerY, 0);
 
     // Define the target position and scale
     const targetPosition = { x: 0, y: 0, z: this.plane.position.z };
@@ -119,6 +132,9 @@ export class RGBShiftEffect extends EffectShell {
       x: targetPosition.x,
       y: targetPosition.y,
       z: targetPosition.z,
+      // onStart: () => {
+      //   this.uniforms.uOffset.value = new THREE.Vector2(0, 0);
+      // },
       onUpdate: this.onPositionUpdate.bind(this),
       onComplete: () => {
         this.isMoving = false;
@@ -130,42 +146,25 @@ export class RGBShiftEffect extends EffectShell {
       y: scaleFactor * this.plane.scale.y * 0.8,
       z: 1,
       onUpdate: () => {
-        // console.log(scaleX, scaleY);
+        console.log(this.uniforms.uOffset.value);
       },
     });
 
-    // this.animationValues = {
-    //   x: this.plane.position.x,
-    //   y: this.plane.position.y,
-    //   scale: this.plane.scale,
+    // const currentOffset = this.uniforms.uOffset.value;
+    // const noOffset = new THREE.Vector3(0, 0, 0);
+
+    // const animationValues = {
+    //   offset: currentOffset,
     // };
 
-    // gsap.to(this.animationValues, {
-    //   x: centerX,
-    //   y: centerY,
-    //   scale: 3,
-    //   onUpdate: () => {
-    //     this.plane.position.set(this.animationValues.x, this.animationValues.y, 1);
-    //     this.plane.scale.set(this.animationValues.scale);
-    //   },
-    //   onComplete: () => {
-    //     this.isMoving = false;
-    //   },
-    // });
+    // console.log(animationValues);
 
     // gsap.to(animationValues, {
-    //   x: centerX,
-    //   y: centerY,
-    //   onUpdate: this.onPositionUpdate.bind(this),
-    //   onComplete: () => {
-    //     this.isMoving = false;
+    //   offset: noOffset,
+    //   onUpdate: () => {
+    //     this.uniforms.uOffset.value = animationValues.offset;
     //   },
     // });
-
-    // this.plane.position.set(centerX, centerY, this.plane.position.z);
-
-    // Scale the plane to fit the viewport with margins
-    // this.plane.scale.set(targetScaleX, targetScaleY, 1);
   }
 
   onMouseEnter() {
@@ -195,29 +194,29 @@ export class RGBShiftEffect extends EffectShell {
   onMouseMove(event) {
     if (!this.isMoving) {
       // project mouse position to world coodinates
-      let x = this.mouse.x.map(-1, 1, -this.viewSize.width / 2, this.viewSize.width / 2);
-      let y = this.mouse.y.map(-1, 1, -this.viewSize.height / 2, this.viewSize.height / 2);
+      this.mouse.x = this.mouse.x.map(-1, 1, -this.viewSize.width / 2, this.viewSize.width / 2);
+      this.mouse.y = this.mouse.y.map(-1, 1, -this.viewSize.height / 2, this.viewSize.height / 2);
 
-      this.position = new THREE.Vector3(x, y, 0);
+      this.position = new THREE.Vector3(this.mouse.x, this.mouse.y, 0);
       gsap.to(this.plane.position, {
-        x: x,
-        y: y,
+        x: this.mouse.x,
+        y: this.mouse.y,
         ease: 'power4.out',
         duration: 1,
         onUpdate: this.onPositionUpdate.bind(this),
       });
     }
-
-    // console.log(this.plane.position);
   }
 
   onPositionUpdate() {
     // compute offset
-    let offset = this.plane.position
-      .clone()
-      .sub(this.position)
-      .multiplyScalar(-this.options.strength);
-    this.uniforms.uOffset.value = offset;
+    if (!this.isMoving) {
+      let offset = this.plane.position
+        .clone()
+        .sub(this.position)
+        .multiplyScalar(-this.options.strength);
+      this.uniforms.uOffset.value = offset;
+    }
   }
 
   onMouseOver(index, e) {
