@@ -1,21 +1,20 @@
 import './utils/math';
 
 import gsap from 'gsap';
+import { CustomEase } from 'gsap/CustomEase';
 import * as THREE from 'three';
 
 import EffectShell from './EffectShell.js';
 import fragmentShader from './shaders/fragmentShader.glsl';
 import vertexShader from './shaders/vertexShader.glsl';
 
+gsap.registerPlugin(CustomEase);
+
 export class RGBShiftEffect extends EffectShell {
   constructor(
     container = document.querySelector('.canvas-container'),
     itemsWrapper = null,
-    options = {},
-    mouse = {
-      x: 0,
-      y: 0,
-    }
+    options = {}
   ) {
     super(container, itemsWrapper);
     if (!this.container || !this.itemsWrapper) return;
@@ -26,13 +25,19 @@ export class RGBShiftEffect extends EffectShell {
     this.init();
 
     this.isMoving = false;
+
+    this.mouse = {
+      x: 0,
+      y: 0,
+    };
+    this.currentOffset;
   }
 
   init() {
     this.position = new THREE.Vector3(0, 0, 0);
     this.scale = new THREE.Vector3(1, 1, 1);
     // Plane size
-    this.geometry = new THREE.PlaneBufferGeometry(2, 2, 32, 32);
+    this.geometry = new THREE.PlaneBufferGeometry(2, 2, 2000, 2000);
     this.uniforms = {
       uTime: {
         value: 0,
@@ -46,6 +51,16 @@ export class RGBShiftEffect extends EffectShell {
       uAlpha: {
         value: 0,
       },
+      uWarpFactor: {
+        value: 0,
+      },
+      scale: {
+        value: 0.5,
+      },
+      aspectRatio: {
+        value: 0.5,
+      },
+      progress: { value: 0 }, // Start with progress = 0
     };
     this.material = new THREE.ShaderMaterial({
       uniforms: this.uniforms,
@@ -89,24 +104,16 @@ export class RGBShiftEffect extends EffectShell {
   }
 
   onMouseClick(event) {
-    console.log('clicked');
-
     this.isMoving = true;
 
-    const planeMargin = 50;
+    // Offset and progress values
+    const animationValues = {
+      x: this.currentOffset.x,
+      y: this.currentOffset.y,
+      progress: 0,
+    };
 
     // Move the plane to the center of the screen
-    const centerX = 0;
-    const centerY = 0;
-
-    // project mouse position to world coodinates
-    // let x = this.mouse.x.map(-1, 1, -this.viewSize.width / 2, this.viewSize.width / 2);
-    // let y = this.mouse.y.map(-1, 1, -this.viewSize.height / 2, this.viewSize.height / 2);
-
-    // this.position = new THREE.Vector3(this.mouse.x, this.mouse.y, 0);
-    // this.position = new THREE.Vector3(centerX, centerY, 0);
-
-    // Define the target position and scale
     const targetPosition = { x: 0, y: 0, z: this.plane.position.z };
 
     const cameraZ = this.camera.position.z;
@@ -124,47 +131,82 @@ export class RGBShiftEffect extends EffectShell {
 
     const scaleFactor = Math.min(scaleX, scaleY);
 
-    // this.plane.scale.set(scaleFactor * this.plane.scale.x, scaleFactor * this.plane.scale.y, 1);
+    const scale_duration = 1.25;
+    // const ease = CustomEase.create(
+    //   'custom',
+    //   'M0,0,C0.29,0,0.498,0.49,0.606,0.766,0.66,0.89,0.78,1,1,1'
+    // );
+    const ease = CustomEase.create(
+      'custom',
+      'M0,0,C0.426,-0.01,0.422,0.572,0.54,0.76,0.64,0.946,0.818,1.001,1,1'
+    );
+
+    const clickTimeline = gsap.timeline();
 
     // Use GSAP to tween the plane's position and scale
-    gsap.to(this.plane.position, {
-      duration: 1,
-      x: targetPosition.x,
-      y: targetPosition.y,
-      z: targetPosition.z,
-      // onStart: () => {
-      //   this.uniforms.uOffset.value = new THREE.Vector2(0, 0);
-      // },
-      onUpdate: this.onPositionUpdate.bind(this),
-      onComplete: () => {
-        this.isMoving = false;
+    clickTimeline.to(
+      this.plane.position,
+      {
+        x: targetPosition.x,
+        y: targetPosition.y,
+        z: targetPosition.z,
+        duration: 1,
+        ease: CustomEase.create(
+          'custom',
+          'M0,0 C0.134,0.03 0.244,0.09 0.298,0.168 0.395,0.308 0.423,0.682 0.55,0.82 0.631,0.908 0.752,1 1,1 '
+        ),
+        onUpdate: this.onPositionUpdate.bind(this),
       },
-    });
-    gsap.to(this.plane.scale, {
-      duration: 1,
-      x: scaleFactor * this.plane.scale.x * 0.8,
-      y: scaleFactor * this.plane.scale.y * 0.8,
-      z: 1,
-      onUpdate: () => {
-        console.log(this.uniforms.uOffset.value);
+      'start'
+    );
+
+    clickTimeline.to(
+      this.uniforms.uOffset.value,
+      {
+        x: 0.0,
+        y: 0.0,
       },
-    });
+      'start'
+    );
 
-    // const currentOffset = this.uniforms.uOffset.value;
-    // const noOffset = new THREE.Vector3(0, 0, 0);
+    clickTimeline.to(
+      this.uniforms.progress,
+      {
+        value: 1.0,
+        duration: scale_duration,
+        ease: ease,
+        onComplete: () => {
+          this.isMoving = false;
+        },
+      },
+      'scale'
+    );
 
-    // const animationValues = {
-    //   offset: currentOffset,
-    // };
+    clickTimeline.to(
+      this.uniforms.scale,
+      {
+        value: scaleFactor * 0.8,
+        duration: scale_duration,
+        ease: ease,
+      },
+      'scale'
+    );
 
-    // console.log(animationValues);
-
-    // gsap.to(animationValues, {
-    //   offset: noOffset,
-    //   onUpdate: () => {
-    //     this.uniforms.uOffset.value = animationValues.offset;
+    // clickTimeline.to(
+    //   this.plane.scale,
+    //   {
+    //     duration: 2.5,
+    //     x: scaleFactor * this.plane.scale.x * 0.8,
+    //     y: scaleFactor * this.plane.scale.y * 0.8,
+    //     z: 1,
+    //     // ease: CustomEase.create(
+    //     //   'custom',
+    //     //   'M0,0 C0.134,0.03 0.244,0.09 0.298,0.168 0.395,0.308 0.423,0.682 0.55,0.82 0.631,0.908 0.752,1 1,1 '
+    //     // ),
+    //     ease: ease,
     //   },
-    // });
+    //   'scale'
+    // );
   }
 
   onMouseEnter() {
@@ -215,7 +257,8 @@ export class RGBShiftEffect extends EffectShell {
         .clone()
         .sub(this.position)
         .multiplyScalar(-this.options.strength);
-      this.uniforms.uOffset.value = offset;
+      this.currentOffset = offset;
+      this.uniforms.uOffset.value = this.currentOffset;
     }
   }
 
@@ -230,12 +273,17 @@ export class RGBShiftEffect extends EffectShell {
 
   onTargetChange(index) {
     if (!this.isMoving) {
+      // Reset uniform values
+      this.uniforms.progress.value = 0;
+      this.uniforms.scale.value = 0.5;
+
       // item target changed
       this.currentItem = this.items[index];
       if (!this.currentItem.texture) return;
 
       // compute image ratio
       let imageRatio = this.currentItem.img.naturalWidth / this.currentItem.img.naturalHeight;
+      this.uniforms.aspectRatio.value = imageRatio;
       this.scale = new THREE.Vector3(imageRatio, 1, 1);
       this.uniforms.uTexture.value = this.currentItem.texture;
       this.plane.scale.copy(this.scale);
