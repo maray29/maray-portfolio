@@ -13,22 +13,14 @@ vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
     return position;
 }
 
-// Function to warp the rectangular mesh into a spherical shape
-vec3 warpToSphere(vec3 position, float progress) {
-    float radius = 0.5;
-
-    float theta = (position.x + 0.5) * 2.0 * 3.14159265;
-    float phi = (position.y + 0.5) * 3.14159265;
-
-    vec3 spherePos = vec3(radius * sin(phi) * cos(theta), radius * cos(phi), radius * sin(phi) * sin(theta));
-
-    return mix(position, spherePos, progress);
-}
-
 vec2 applyDistortion(vec2 uv) {
     vec2 center = vec2(0.5, 0.5);
-    float k1 = 0.5 * progress;
-    float k2 = 0.25 * progress;
+    // float k1 = 0.5 * progress;
+    // float k2 = 0.25 * progress;
+
+    // Control koef values based on scalefactor?
+    float k1 = 200.0 * progress / aspectRatio;
+    float k2 = 125.0 * progress / aspectRatio;
 
     // vec2 distUv = uv - center;
     vec2 distUv = (uv - center) * vec2(aspectRatio, 1.0);
@@ -52,7 +44,8 @@ void main() {
     // vUv = distortedUv;
 
     // Scale the mesh based on progress value
-    vec3 scaledPosition = position * ((scale + progress) * 0.4);
+    // vec3 scaledPosition = position * ((scale + progress));
+    vec3 scaledPosition = position * scale;
 
     scaledPosition = deformationCurve(scaledPosition, uv, uOffset);
     vec4 mvPosition = modelViewMatrix * vec4(scaledPosition, 1.0);

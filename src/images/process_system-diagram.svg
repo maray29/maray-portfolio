@@ -5,12 +5,20 @@
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
-  <g id="process_system-diagram">
-    <circle id="circle" cx="562" cy="583" r="149.75" stroke="#5F5F5F" stroke-width="0.5" />
+  <g id="process_system-diagram" clip-path="url(#clip0_1127_351)">
+    <circle id="circle" cx="597" cy="597" r="149.75" stroke="#5F5F5F" stroke-width="0.5" />
+    <circle
+      id="circle-reference"
+      cx="597"
+      cy="597"
+      r="251.75"
+      stroke="#414141"
+      stroke-width="0.5"
+    />
     <g id="labels">
       <text
         id="html"
-        transform="translate(231 603) rotate(180)"
+        transform="translate(245 617) rotate(180)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -23,7 +31,7 @@
       </text>
       <text
         id="CSS"
-        transform="translate(314.512 361.434) rotate(-135)"
+        transform="translate(335.512 360.434) rotate(-135)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -36,7 +44,7 @@
       </text>
       <text
         id="value"
-        transform="translate(576 915) rotate(90)"
+        transform="translate(614 953) rotate(90)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -49,7 +57,7 @@
       </text>
       <text
         id="SEO"
-        transform="translate(333.5 814.457) rotate(135)"
+        transform="translate(360.104 860.457) rotate(135)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -70,11 +78,11 @@
         font-weight="600"
         letter-spacing="0em"
       >
-        <tspan x="892" y="590.727">MARKETING</tspan>
+        <tspan x="950" y="605.727">MARKETING</tspan>
       </text>
       <text
         id="content"
-        transform="translate(817.455 796) rotate(45)"
+        transform="translate(859.455 835) rotate(45)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -87,7 +95,7 @@
       </text>
       <text
         id="experience"
-        transform="translate(542 250) rotate(-90)"
+        transform="translate(578 246) rotate(-90)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -100,7 +108,7 @@
       </text>
       <text
         id="ui"
-        transform="translate(792 345.676) rotate(-45)"
+        transform="translate(833 335.676) rotate(-45)"
         fill="white"
         xml:space="preserve"
         style="white-space: pre"
@@ -115,25 +123,25 @@
     <g id="lines">
       <path
         id="line"
-        d="M335.062 795.598L788.806 371.125"
+        d="M596 1065L596 54"
         stroke="url(#paint0_linear_1127_351)"
         stroke-opacity="0.2"
       />
       <path
         id="line_2"
-        d="M779.082 784.258L346.406 382.37"
+        d="M1166 598L26.0019 598"
         stroke="url(#paint1_linear_1127_351)"
         stroke-opacity="0.2"
       />
       <path
         id="line_3"
-        d="M562 870L562 295"
+        d="M1183.83 1184.33L8.17326 8.67326"
         stroke="url(#paint2_linear_1127_351)"
         stroke-opacity="0.2"
       />
       <path
         id="line_4"
-        d="M857 583L267 583"
+        d="M1200.18 -5.63672L-6.14039 1200.69"
         stroke="url(#paint3_linear_1127_351)"
         stroke-opacity="0.2"
       />
@@ -144,7 +152,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 557 737)"
+        transform="matrix(1 0 0 -1 591 751)"
         fill="white"
       />
       <circle
@@ -152,7 +160,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 667 689)"
+        transform="matrix(1 0 0 -1 698 707)"
         fill="white"
       />
       <circle
@@ -160,7 +168,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 448 690)"
+        transform="matrix(1 0 0 -1 487 708)"
         fill="white"
       />
       <circle
@@ -168,7 +176,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 408 587)"
+        transform="matrix(1 0 0 -1 443 602)"
         fill="white"
       />
       <circle
@@ -176,7 +184,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 448 485)"
+        transform="matrix(1 0 0 -1 487 496)"
         fill="white"
       />
       <circle
@@ -184,7 +192,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 558 437)"
+        transform="matrix(1 0 0 -1 592 452)"
         fill="white"
       />
       <circle
@@ -192,7 +200,7 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 667 485)"
+        transform="matrix(1 0 0 -1 699 496)"
         fill="white"
       />
       <circle
@@ -200,130 +208,168 @@
         cx="4.5"
         cy="4.5"
         r="4.5"
-        transform="matrix(1 0 0 -1 707 587)"
+        transform="matrix(1 0 0 -1 742 602)"
         fill="white"
       />
     </g>
-    <g id="circle-large">
-      <circle
-        id="circle_2"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-1 0 0 1 584 309)"
-        fill="white"
-      />
-      <g id="plus">
-        <path id="Vector 33" d="M557 331H569" stroke="black" />
-        <path id="Vector 34" d="M563 337L563 325" stroke="black" />
+    <g id="large-circles">
+      <g id="circle-large">
+        <circle
+          id="circle_2"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-1 0 0 1 617 323)"
+          fill="white"
+        />
+        <g id="plus">
+          <path id="Vector 33" d="M590 345H602" stroke="black" />
+          <path id="Vector 34" d="M596 351L596 339" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_2">
+        <circle
+          id="circle_3"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-1 0 0 1 869 576)"
+          fill="white"
+        />
+        <g id="plus_2">
+          <path id="Vector 33_2" d="M842 598H854" stroke="black" />
+          <path id="Vector 34_2" d="M848 604L848 592" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_3">
+        <circle
+          id="circle_4"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-1 0 0 1 366 576)"
+          fill="white"
+        />
+        <g id="plus_3">
+          <path id="Vector 33_3" d="M339 598H351" stroke="black" />
+          <path id="Vector 34_3" d="M345 604L345 592" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_4">
+        <circle
+          id="circle_5"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-1 0 0 1 617 827)"
+          fill="white"
+        />
+        <g id="plus_4">
+          <path id="Vector 33_4" d="M590 849H602" stroke="black" />
+          <path id="Vector 34_4" d="M596 855L596 843" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_5">
+        <circle
+          id="circle_6"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-0.707107 0.707107 0.707107 0.707107 774.205 388.797)"
+          fill="white"
+        />
+        <g id="plus_5">
+          <path id="Vector 33_5" d="M770.668 423.445L779.153 414.96" stroke="black" />
+          <path id="Vector 34_5" d="M779.154 423.445L770.669 414.96" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_6">
+        <circle
+          id="circle_7"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 419.203 449.609)"
+          fill="white"
+        />
+        <g id="plus_6">
+          <path id="Vector 33_6" d="M422.74 414.961L414.255 423.446" stroke="black" />
+          <path id="Vector 34_6" d="M414.254 414.961L422.739 423.446" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_7">
+        <circle
+          id="circle_8"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(-0.707107 0.707107 0.707107 0.707107 774.205 744.797)"
+          fill="white"
+        />
+        <g id="plus_7">
+          <path id="Vector 33_7" d="M770.668 779.445L779.153 770.96" stroke="black" />
+          <path id="Vector 34_7" d="M779.154 779.445L770.669 770.96" stroke="black" />
+        </g>
+      </g>
+      <g id="circle-large_8">
+        <circle
+          id="circle_9"
+          cx="21.5"
+          cy="21.5"
+          r="21.5"
+          transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 420.203 805.609)"
+          fill="white"
+        />
+        <g id="plus_8">
+          <path id="Vector 33_8" d="M423.74 770.961L415.255 779.446" stroke="black" />
+          <path id="Vector 34_8" d="M415.254 770.961L423.739 779.446" stroke="black" />
+        </g>
       </g>
     </g>
-    <g id="circle-large_2">
-      <circle
-        id="circle_3"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-1 0 0 1 835 562)"
-        fill="white"
-      />
-      <g id="plus_2">
-        <path id="Vector 33_2" d="M808 584H820" stroke="black" />
-        <path id="Vector 34_2" d="M814 590L814 578" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_3">
-      <circle
-        id="circle_4"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-1 0 0 1 332 562)"
-        fill="white"
-      />
-      <g id="plus_3">
-        <path id="Vector 33_3" d="M305 584H317" stroke="black" />
-        <path id="Vector 34_3" d="M311 590L311 578" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_4">
-      <circle
-        id="circle_5"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-1 0 0 1 584 813)"
-        fill="white"
-      />
-      <g id="plus_4">
-        <path id="Vector 33_4" d="M557 835H569" stroke="black" />
-        <path id="Vector 34_4" d="M563 841L563 829" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_5">
-      <circle
-        id="circle_6"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-0.707107 0.707107 0.707107 0.707107 745.205 381.797)"
-        fill="white"
-      />
-      <g id="plus_5">
-        <path id="Vector 33_5" d="M741.668 416.445L750.153 407.96" stroke="black" />
-        <path id="Vector 34_5" d="M750.154 416.445L741.669 407.96" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_6">
-      <circle
-        id="circle_7"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 377.203 442.609)"
-        fill="white"
-      />
-      <g id="plus_6">
-        <path id="Vector 33_6" d="M380.74 407.961L372.255 416.446" stroke="black" />
-        <path id="Vector 34_6" d="M372.254 407.961L380.739 416.446" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_7">
-      <circle
-        id="circle_8"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(-0.707107 0.707107 0.707107 0.707107 748.205 720.797)"
-        fill="white"
-      />
-      <g id="plus_7">
-        <path id="Vector 33_7" d="M744.668 755.445L753.153 746.96" stroke="black" />
-        <path id="Vector 34_7" d="M753.154 755.445L744.669 746.96" stroke="black" />
-      </g>
-    </g>
-    <g id="circle-large_8">
-      <circle
-        id="circle_9"
-        cx="21.5"
-        cy="21.5"
-        r="21.5"
-        transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 373.203 781.609)"
-        fill="white"
-      />
-      <g id="plus_8">
-        <path id="Vector 33_8" d="M376.74 746.961L368.255 755.446" stroke="black" />
-        <path id="Vector 34_8" d="M368.254 746.961L376.739 755.446" stroke="black" />
-      </g>
-    </g>
+    <text
+      id="01"
+      fill="white"
+      xml:space="preserve"
+      style="white-space: pre"
+      font-family="Inter"
+      font-size="8"
+      font-weight="300"
+      letter-spacing="0em"
+    >
+      <tspan x="453" y="591.909">01</tspan>
+    </text>
+    <text
+      id="02"
+      fill="white"
+      xml:space="preserve"
+      style="white-space: pre"
+      font-family="Inter"
+      font-size="8"
+      font-weight="300"
+      letter-spacing="0em"
+    >
+      <tspan x="369" y="591.909">02</tspan>
+    </text>
+    <text
+      id="03"
+      fill="white"
+      xml:space="preserve"
+      style="white-space: pre"
+      font-family="Inter"
+      font-size="8"
+      font-weight="300"
+      letter-spacing="0em"
+    >
+      <tspan x="252" y="591.909">03</tspan>
+    </text>
   </g>
   <defs>
     <linearGradient
       id="paint0_linear_1127_351"
-      x1="792.41"
-      y1="377.392"
-      x2="343.107"
-      y2="796.878"
+      x1="603.039"
+      y1="56.6845"
+      x2="601.429"
+      y2="1056.86"
       gradientUnits="userSpaceOnUse"
     >
       <stop stop-color="white" stop-opacity="0" />
@@ -332,10 +378,10 @@
     </linearGradient>
     <linearGradient
       id="paint1_linear_1127_351"
-      x1="352.345"
-      y1="378.279"
-      x2="780.017"
-      y2="776.269"
+      x1="29.029"
+      y1="590.961"
+      x2="1156.83"
+      y2="593.009"
       gradientUnits="userSpaceOnUse"
     >
       <stop stop-color="white" stop-opacity="0" />
@@ -344,10 +390,10 @@
     </linearGradient>
     <linearGradient
       id="paint2_linear_1127_351"
-      x1="569.039"
-      y1="296.527"
-      x2="568.518"
-      y2="865.373"
+      x1="16.2723"
+      y1="6.81762"
+      x2="1176.26"
+      y2="1172.96"
       gradientUnits="userSpaceOnUse"
     >
       <stop stop-color="white" stop-opacity="0" />
@@ -356,15 +402,18 @@
     </linearGradient>
     <linearGradient
       id="paint3_linear_1127_351"
-      x1="268.567"
-      y1="575.961"
-      x2="852.252"
-      y2="576.509"
+      x1="-7.91466"
+      y1="1192.51"
+      x2="1188.73"
+      y2="2.34329"
       gradientUnits="userSpaceOnUse"
     >
       <stop stop-color="white" stop-opacity="0" />
       <stop offset="0.523958" stop-color="white" />
       <stop offset="1" stop-color="white" stop-opacity="0" />
     </linearGradient>
+    <clipPath id="clip0_1127_351">
+      <rect width="1194" height="1194" fill="white" />
+    </clipPath>
   </defs>
 </svg>
