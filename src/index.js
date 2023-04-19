@@ -99,9 +99,6 @@ class App {
       this.program.scrollY = scroll
 
       this.program.pageScrolledToEnd = this.isPageScrolledToEnd()
-      // if (this.program.lockScroll) {
-      //   this.lenis.stop()
-      // }
 
       if (this.pageScrolledToEnd) {
         console.log('The page is scrolled to the end.')
