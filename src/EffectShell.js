@@ -1,4 +1,12 @@
 import * as THREE from 'three'
+import postFXvertex from './shaders/postFXvertexShader.glsl'
+import postFXfragment from './shaders/postFXfragmentShader.glsl'
+import verticalBlurFragmentShader from './shaders/verticalBlurFragmentShader.glsl'
+import horizontalBlurFragmentShader from './shaders/horizontalBlurFragmentShader.glsl'
+
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js'
 
 export default class EffectShell {
   constructor(container = document.body, itemsWrapper = null) {
@@ -63,6 +71,67 @@ export default class EffectShell {
     this.time = 0
     this.clock = new THREE.Clock()
 
+    // Create a new framebuffer we will use to render to
+    // the video card memory
+    this.renderBufferA = new THREE.WebGLRenderTarget(
+      innerWidth * devicePixelRatio,
+      innerHeight * devicePixelRatio
+    )
+
+    // Create a second framebuffer
+    this.renderBufferB = new THREE.WebGLRenderTarget(
+      innerWidth * devicePixelRatio,
+      innerHeight * devicePixelRatio
+    )
+
+    // Create a second scene that will hold our fullscreen plane
+    this.postFXScene = new THREE.Scene()
+
+    // Create a plane geometry that covers the entire screen
+    this.postFXGeometry = new THREE.PlaneBufferGeometry(innerWidth, innerHeight)
+
+    // Create a plane material that expects a sampler texture input
+    // We will pass our generated framebuffer texture to it
+    this.postFXMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        sampler: { value: null },
+        time: { value: 0 },
+        mousePos: { value: new THREE.Vector2(0, 0) },
+      },
+      // vertex shader will be in charge of positioning our plane correctly
+      vertexShader: postFXvertex,
+      fragmentShader: postFXfragment,
+      transparent: true,
+    })
+    this.postFXMesh = new THREE.Mesh(this.postFXGeometry, this.postFXMaterial)
+    this.postFXScene.add(this.postFXMesh)
+
+    // Horizontal blur shader material
+    this.horizontalBlurMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        sampler: { value: null },
+        blurSize: { value: 1.0 / window.innerWidth }, // Adjust this value to control the blur amount
+      },
+      vertexShader: postFXvertex, // Reuse the vertex shader from your original setup
+      fragmentShader: horizontalBlurFragmentShader, // Replace with the actual shader code for horizontal blur
+    })
+
+    // Vertical blur shader material
+    this.verticalBlurMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        sampler: { value: null },
+        blurSize: { value: 1.0 / window.innerHeight }, // Adjust this value to control the blur amount
+      },
+      vertexShader: postFXvertex, // Reuse the vertex shader from your original setup
+      fragmentShader: verticalBlurFragmentShader, // Replace with the actual shader code for vertical blur
+    })
+
+    this.horizontalBlurMesh = new THREE.Mesh(this.postFXGeometry, this.horizontalBlurMaterial)
+    this.verticalBlurMesh = new THREE.Mesh(this.postFXGeometry, this.verticalBlurMaterial)
+
+    this.postFXScene.add(this.horizontalBlurMesh)
+    this.postFXScene.add(this.verticalBlurMesh)
+
     // animation loop
     this.renderer.setAnimationLoop(this.render.bind(this))
     // requestAnimationFrame(this.render.bind(this));
@@ -71,8 +140,39 @@ export default class EffectShell {
   render() {
     // called every frame
     this.time += this.clock.getDelta() * this.timeSpeed
+    // Explicitly set renderBufferA as the framebuffer to render to
+    this.renderer.autoClearColor = false
+
+    this.renderer.setRenderTarget(this.renderBufferA)
+
+    this.renderer.render(this.postFXScene, this.camera)
     this.renderer.render(this.scene, this.camera)
-    // this.renderer.setAnimationLoop(this.render.bind(this));
+
+    // Render the horizontal blur pass to renderBufferB using the texture from renderBufferA
+    this.horizontalBlurMesh.material.uniforms.sampler.value = this.renderBufferA.texture
+    this.renderer.setRenderTarget(this.renderBufferB)
+    this.renderer.render(this.postFXScene, this.camera)
+    this.renderer.render(this.horizontalBlurMesh, this.camera)
+
+    // Render the vertical blur pass to the output framebuffer (null) using the texture from renderBufferB
+    this.verticalBlurMesh.material.uniforms.sampler.value = this.renderBufferB.texture
+    this.renderer.setRenderTarget(null)
+    this.renderer.render(this.postFXScene, this.camera)
+    this.renderer.render(this.verticalBlurMesh, this.camera)
+
+    // 👇
+    // Assign the generated texture to the sampler variable used
+    // in the postFXMesh that covers the device screen
+    this.postFXMesh.material.uniforms.sampler.value = this.renderBufferA.texture
+
+    this.renderer.render(this.postFXScene, this.camera)
+
+    // 👇
+    // Ping-pong our framebuffers by swapping them
+    // at the end of each frame render
+    const temp = this.renderBufferA
+    this.renderBufferA = this.renderBufferB
+    this.renderBufferB = temp
   }
 
   initEffectShell() {
@@ -144,6 +244,8 @@ export default class EffectShell {
 
     this.mouseNormal.x = event.clientX
     this.mouseNormal.y = event.clientY
+
+    this.postFXMesh.material.uniforms.mousePos.value.set(this.mouse.x, this.mouse.y)
 
     this.onMouseMove(event)
 

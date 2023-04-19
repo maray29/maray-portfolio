@@ -47,6 +47,9 @@ export class RGBShiftEffect extends EffectShell {
     this.isScrolling = false
     this.lockScroll = false
     this.isAnimating = false
+    this.initialScale = 0.75
+
+    this.pageScrolledToEnd = false
   }
 
   init() {
@@ -68,7 +71,7 @@ export class RGBShiftEffect extends EffectShell {
         value: 0,
       },
       scale: {
-        value: 1.0,
+        value: this.initialScale,
       },
       aspectRatio: {
         value: 0.5,
@@ -136,8 +139,11 @@ export class RGBShiftEffect extends EffectShell {
     // Calculate the plane's new Y position
     this.scrollableHeight = this.bodyHeight - this.windowHeight
 
-    this.newPosY =
-      this.initialPos.y + (scrollY / this.scrollableHeight) * (this.bodyHeight - this.windowHeight)
+    if (!this.pageScrolledToEnd) {
+      this.newPosY =
+        this.initialPos.y +
+        (scrollY / this.scrollableHeight) * (this.bodyHeight - this.windowHeight)
+    }
 
     // Update the plane's Y position
     // if (!this.isMoving) this.plane.position.setY(this.newPosY)
@@ -145,7 +151,7 @@ export class RGBShiftEffect extends EffectShell {
     if (!this.isMoving) {
       gsap.to(this.plane.position, {
         y: this.newPosY,
-        // overwrite: 'auto',
+        // overwrite: true,
         duration: 0.25,
         // onComplete: () => {
         //   console.log(this.plane.position)
@@ -166,7 +172,7 @@ export class RGBShiftEffect extends EffectShell {
     const scaleX = this.viewport.width / initialWidth
     const scaleY = this.viewport.height / initialHeight
 
-    const scaleFactor = Math.min(scaleX, scaleY) * 0.8
+    const scaleFactor = Math.min(scaleX, scaleY) * 0.75
 
     const scale_duration = 1.25
     const ease = CustomEase.create(
@@ -309,7 +315,7 @@ export class RGBShiftEffect extends EffectShell {
 
     // Reset uniform values
     this.uniforms.progress.value = 0
-    this.uniforms.scale.value = 1.0
+    this.uniforms.scale.value = this.initialScale
 
     // item target changed
     this.currentItem = this.items[index]

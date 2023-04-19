@@ -16,6 +16,9 @@ dependencies:
   gsap:
     specifier: ^3.11.5
     version: 3.11.5
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   split-type:
     specifier: ^0.3.3
     version: 0.3.3
@@ -1988,6 +1991,10 @@ packages:
   /lodash.startcase@4.4.0:
     resolution: {integrity: sha512-+WKqsK294HMSc2jEbNgpHpd0JfIBhp7rEV4aqXWqFr6AlXov+SlcgB1Fv01y2kGe3Gc8nMW7VA0SrGuSkRfIEg==}
     dev: true
+
+  /lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: false
 
   /lru-cache@4.1.5:
     resolution: {integrity: sha512-sWZlbEP2OsHNkXrMl5GYk/jKk70MBng6UU4YI/qGDYbgf6YbP4EvmqISbXCoJiRKs+1bSpFHVgQxvJ17F2li5g==}
