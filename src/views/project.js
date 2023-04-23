@@ -27,7 +27,7 @@ export const project = {
             onComplete: () => {
               APP.stage.scene.remove(APP.plane.mesh)
               APP.plane = null
-              console.log('APP.plane not removed:', APP.plane.mesh)
+              // console.log('APP.plane not removed:', APP.plane.mesh)
             },
           },
           'start'
