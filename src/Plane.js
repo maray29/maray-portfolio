@@ -4,13 +4,13 @@ import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import * as THREE from 'three'
 
-import EffectShell from './EffectShell.js'
+import PlaneBase from './PlaneBase.js'
 import fragmentShader from './shaders/fragmentShader.glsl'
 import vertexShader from './shaders/vertexShader.glsl'
 
 gsap.registerPlugin(CustomEase)
 
-export class RGBShiftEffect extends EffectShell {
+export class Plane extends PlaneBase {
   constructor(
     container = document.querySelector('.canvas-container'),
     itemsWrapper = null,
@@ -21,8 +21,6 @@ export class RGBShiftEffect extends EffectShell {
 
     options.strength = options.strength || 0.25
     this.options = options
-
-    this.init()
 
     this.isMoving = false
 
@@ -50,10 +48,35 @@ export class RGBShiftEffect extends EffectShell {
     this.initialScale = 0.75
 
     this.pageScrolledToEnd = false
+
+    // this.currentItem = this.items[0]
+
+    // setTimeout(() => {
+    //   console.log('Delayed current item texture:', this.currentItem.texture)
+    //   this.init()
+    // }, 1000)
+
+    this.initializeAndInit()
+  }
+
+  async initializeAndInit() {
+    await this.initialize()
+    this.init()
   }
 
   init() {
-    this.position = new THREE.Vector3(0, 0, 0)
+    this.itemBounds = {
+      width: this.currentItem.img.naturalWidth,
+      height: this.currentItem.img.naturalHeight,
+    }
+
+    console.log('items:', this.items)
+    console.log('current item:', this.currentItem)
+    console.log('current item img:', this.currentItem.img)
+    console.log('current item texture:', this.currentItem.texture)
+    console.log('current item img width:', this.currentItem.img.naturalWidth)
+    console.log('this.itemBounds:', this.itemBounds)
+    this.position = new THREE.Vector3(1, 1, 0)
     this.scale = new THREE.Vector3(1, 1, 1)
     // Plane size
     this.geometry = new THREE.PlaneGeometry(1, 1, 1000, 1000)
@@ -62,13 +85,13 @@ export class RGBShiftEffect extends EffectShell {
         value: 0,
       },
       uTexture: {
-        value: null,
+        value: this.currentItem.texture,
       },
       uOffset: {
         value: new THREE.Vector2(0.0, 0.0),
       },
       uAlpha: {
-        value: 0,
+        value: 1,
       },
       scale: {
         value: this.initialScale,
@@ -83,43 +106,31 @@ export class RGBShiftEffect extends EffectShell {
     }
     this.material = new THREE.ShaderMaterial({
       uniforms: this.uniforms,
-      // vertexShader: `
-      //     uniform vec2 uOffset;
-      //     varying vec2 vUv;
-      //     vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
-      //       float M_PI = 3.1415926535897932384626433832795;
-      //       position.x = position.x + (sin(uv.y * M_PI) * offset.x);
-      //       position.y = position.y + (sin(uv.x * M_PI) * offset.y);
-      //       return position;
-      //     }
-      //     void main() {
-      //       vUv = uv;
-      //       vec3 newPosition = position;
-      //       newPosition = deformationCurve(position,uv,uOffset);
-      //       gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-      //     }
-      //   `,
-      // fragmentShader: `
-      //     uniform sampler2D uTexture;
-      //     uniform float uAlpha;
-      //     uniform vec2 uOffset;
-      //     varying vec2 vUv;
-      //     vec3 rgbShift(sampler2D texture1, vec2 uv, vec2 offset) {
-      //       float r = texture2D(uTexture,vUv + uOffset).r;
-      //       vec2 gb = texture2D(uTexture,vUv).gb;
-      //       return vec3(r,gb);
-      //     }
-      //     void main() {
-      //       vec3 color = rgbShift(uTexture,vUv,uOffset);
-      //       gl_FragColor = vec4(color,uAlpha);
-      //     }
-      //   `,
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
       transparent: true,
     })
     this.plane = new THREE.Mesh(this.geometry, this.material)
+    this.plane.scale.set(this.itemBounds.width, this.itemBounds.height, 1)
+    console.log('this.plane.scale', this.plane.scale)
     this.scene.add(this.plane)
+
+    console.log('current item texture2:', this.currentItem.texture)
+    console.log('current item2:', this.currentItem)
+  }
+
+  _setPlane() {
+    this.currentItem = this.items[0]
+    this.uniforms.uTexture.value = this.currentItem.texture
+    gsap.to(this.plane.position, {
+      x: 0,
+      y: 0,
+    })
+    gsap.to(this.uniforms.uAlpha, {
+      value: 1,
+      ease: 'power4.out',
+      duration: 0.5,
+    })
   }
 
   updateScrollValues(x, scrollY) {
@@ -200,7 +211,6 @@ export class RGBShiftEffect extends EffectShell {
         onComplete: () => {
           this.onPositionUpdate.bind(this)
           this.initialPos.copy(this.plane.position)
-          console.log(this.plane.position)
         },
       },
       'start'

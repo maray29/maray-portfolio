@@ -4,6 +4,9 @@ dependencies:
   '@barba/core':
     specifier: ^2.9.7
     version: 2.9.7
+  '@barba/prefetch':
+    specifier: ^2.1.10
+    version: 2.1.10
   '@finsweet/ts-utils':
     specifier: ^0.39.1
     version: 0.39.1
@@ -108,6 +111,10 @@ packages:
     dependencies:
       is-promise: 2.2.2
       path-to-regexp: 3.2.0
+    dev: false
+
+  /@barba/prefetch@2.1.10:
+    resolution: {integrity: sha512-5mdrn9uEL4FoBDRLl+C7o06NaYP7Xsu2AAoD8YLKrgPemJP5Hjq6++kG8DtYrvvTjPPhuFMxSjGJxnhOKYalnQ==}
     dev: false
 
   /@changesets/apply-release-plan@6.1.3:

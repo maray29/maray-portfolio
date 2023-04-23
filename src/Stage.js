@@ -4,73 +4,73 @@ import postFXfragment from './shaders/postFXfragmentShader.glsl'
 import verticalBlurFragmentShader from './shaders/verticalBlurFragmentShader.glsl'
 import horizontalBlurFragmentShader from './shaders/horizontalBlurFragmentShader.glsl'
 
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
-import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js'
-
-export default class EffectShell {
-  constructor(container = document.body, itemsWrapper = null) {
+export default class Stage {
+  constructor(container = document.body) {
     this.container = container
-    // vars from 3js course
-    this.width = this.container.clientWidth
-    this.height = this.container.clientHeight
+    this.renderParam = {
+      width: this.container.clientWidth,
+      height: this.container.clientHeight,
+    }
 
-    this.itemsWrapper = itemsWrapper
-    if (!this.container || !this.itemsWrapper) return
+    this.initialize()
+  }
 
+  initialize() {
     this.setup()
-    this.initEffectShell().then(() => {
-      // console.log("load finished");
-      this.isLoaded = true
-      if (this.isMouseOver) this.onMouseOver(this.tempItemIndex)
-      this.tempItemIndex = null
-    })
-    this.createEventsListeners()
-    // this.barba();
 
-    let pageID
-    let text
+    this.isLoaded = true
+    if (this.isMouseOver) this.onMouseOver(this.tempItemIndex)
+    this.tempItemIndex = null
+    // this.createEventsListeners()
   }
 
   setup() {
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
-    // window.addEventListener("scroll", this.onScroll.bind(this), false);
 
-    // camera from 3js course
-    this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 0.1, 1000)
-    this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI
+    this._setCamera()
+    this._setScene()
+    this._setRender()
+    this._setPostFX()
 
-    this.camera.position.z = 600
-
-    // this.camera.lookAt(this.container.position);
-
-    // this.camera.position.z = 3;
-    this.camera.aspect = this.width / this.height
-    this.camera.updateProjectionMatrix()
-
-    // scene
-    this.scene = new THREE.Scene()
-
-    // renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-
-    // Set size?
-    this.renderer.setSize(this.width, this.height)
-
-    // this.renderer.setSize(this.viewport.width, this.viewport.height);
-    this.renderer.setPixelRatio(window.devicePixelRatio)
-    this.container.appendChild(this.renderer.domElement)
-
-    //mouse
+    // mouse
     this.mouse = new THREE.Vector2()
-    this.mouseMapped = new THREE.Vector2()
-    this.mouseNormal = new THREE.Vector2()
 
     // time
     this.timeSpeed = 2
     this.time = 0
     this.clock = new THREE.Clock()
 
+    // animation loop
+    this.renderer.setAnimationLoop(this.render.bind(this))
+  }
+
+  _setCamera() {
+    this.camera = new THREE.PerspectiveCamera(
+      30,
+      this.renderParam.width / this.renderParam.height,
+      0.1,
+      1000
+    )
+    this.camera.fov = (2 * Math.atan(this.renderParam.height / 2 / 600) * 180) / Math.PI
+
+    this.camera.position.z = 600
+
+    this.camera.aspect = this.renderParam.width / this.renderParam.height
+    this.camera.updateProjectionMatrix()
+  }
+
+  _setScene() {
+    this.scene = new THREE.Scene()
+  }
+
+  _setRender() {
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    this.renderer.setSize(this.viewport.width, this.viewport.height)
+    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.container.appendChild(this.renderer.domElement)
+  }
+
+  _setPostFX() {
     // Create a new framebuffer we will use to render to
     // the video card memory
     this.renderBufferA = new THREE.WebGLRenderTarget(
@@ -88,7 +88,7 @@ export default class EffectShell {
     this.postFXScene = new THREE.Scene()
 
     // Create a plane geometry that covers the entire screen
-    this.postFXGeometry = new THREE.PlaneBufferGeometry(innerWidth, innerHeight)
+    this.postFXGeometry = new THREE.PlaneGeometry(innerWidth, innerHeight)
 
     // Create a plane material that expects a sampler texture input
     // We will pass our generated framebuffer texture to it
@@ -131,10 +131,6 @@ export default class EffectShell {
 
     this.postFXScene.add(this.horizontalBlurMesh)
     this.postFXScene.add(this.verticalBlurMesh)
-
-    // animation loop
-    this.renderer.setAnimationLoop(this.render.bind(this))
-    // requestAnimationFrame(this.render.bind(this));
   }
 
   render() {
@@ -160,14 +156,12 @@ export default class EffectShell {
     this.renderer.render(this.postFXScene, this.camera)
     this.renderer.render(this.verticalBlurMesh, this.camera)
 
-    // 👇
     // Assign the generated texture to the sampler variable used
     // in the postFXMesh that covers the device screen
     this.postFXMesh.material.uniforms.sampler.value = this.renderBufferA.texture
 
     this.renderer.render(this.postFXScene, this.camera)
 
-    // 👇
     // Ping-pong our framebuffers by swapping them
     // at the end of each frame render
     const temp = this.renderBufferA
@@ -175,118 +169,13 @@ export default class EffectShell {
     this.renderBufferB = temp
   }
 
-  initEffectShell() {
-    let promises = []
-
-    this.items = this.itemsElements
-
-    const THREEtextureLoader = new THREE.TextureLoader()
-    this.items.forEach((item, index) => {
-      // create textures
-      promises.push(this.loadTexture(THREEtextureLoader, item.img ? item.img.src : null, index))
-    })
-
-    return new Promise((resolve, reject) => {
-      // resolve textures promises
-      Promise.all(promises).then((promises) => {
-        // all textures are loaded
-        promises.forEach((promise, index) => {
-          // assign texture to item
-          this.items[index].texture = promise.texture
-        })
-        resolve()
-      })
-    })
-  }
-
-  createEventsListeners() {
-    if (window.onMouseOver) {
-      window.removeEventListener('mouseover', window.onMouseOver)
-    }
-
-    this.items.forEach((item, index) => {
-      // console.log(item)
-      // console.log("Adding an event listener for each item.");
-      item.element.addEventListener('mouseover', this._onMouseOver.bind(this, index), false)
-      item.element.addEventListener('click', this._onMouseClick.bind(this))
-      console.log(item.element)
-    })
-
-    this.itemsWrapper.addEventListener('mousemove', this._onMouseMove.bind(this), false)
-    console.log(this.itemsWrapper)
-
-    // Event listener for items wrapper
-    this.itemsWrapper.addEventListener('mouseleave', this._onMouseLeave.bind(this), false)
-  }
-
-  _onWheel() {
-    this.onWheel()
-  }
-
-  _onMouseClick(event) {
-    // event.preventDefault();
-    this.onMouseClick(event)
-  }
-
-  _onMouseLeave(event) {
-    this.isMouseOver = false
-    this.onMouseLeave(event)
-    // console.log("_onMouseLeave");
-  }
-
-  _onMouseMove(event) {
-    // get normalized mouse position on viewport
-    this.mouse.x = (event.clientX / this.width) * 2 - 1
-    this.mouse.y = -(event.clientY / this.height) * 2 + 1
-
-    this.mouseMapped.x = event.clientX - this.width / 2
-    this.mouseMapped.y = -(event.clientY - this.height / 2)
-
-    this.mouseNormal.x = event.clientX
-    this.mouseNormal.y = event.clientY
-
-    this.postFXMesh.material.uniforms.mousePos.value.set(this.mouse.x, this.mouse.y)
-
-    this.onMouseMove(event)
-
-    // console.log(this.mouseNew)
-  }
-
-  _onMouseOver(index, event) {
-    this.tempItemIndex = index
-    this.onMouseOver(index, event)
-    // console.log("_onMouseOver");
-  }
-
   onWindowResize() {
-    // Code from three.js course
-    this.width = this.container.offsetWidth
-    this.height = this.container.offsetHeight
-    this.renderer.setSize(this.width, this.height)
-    this.camera.aspect = this.width / this.height
+    this.renderer.setSize(this.viewport.width, this.viewport.height)
+    this.camera.aspect = this.viewport.width / this.viewport.height
     this.camera.updateProjectionMatrix()
 
-    this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI
-
-    // Original code
-    // this.camera.aspect = this.viewport.aspectRatio;
-    // this.camera.updateProjectionMatrix();
-    // this.renderer.setSize(this.viewport.width, this.viewport.height);
+    this.camera.fov = (2 * Math.atan(this.viewport.height / 2 / 600) * 180) / Math.PI
   }
-
-  onUpdate() {}
-
-  onWheel() {}
-
-  onMouseClick(event) {}
-
-  onMouseEnter(event) {}
-
-  onMouseLeave(event) {}
-
-  onMouseMove(event) {}
-
-  onMouseOver(index, event) {}
 
   get viewport() {
     let width = this.container.offsetWidth
@@ -311,23 +200,9 @@ export default class EffectShell {
     return { width, height, vFov }
   }
 
-  get itemsElements() {
-    // convert NodeList to Array
-    const items = [...this.itemsWrapper.querySelectorAll('.project_link')]
-
-    //debug
-    // console.log(items);
-    //create Array of items including element, image and index
-    return items.map((item, index) => ({
-      element: item,
-      img: item.querySelector('img') || null,
-      index: index,
-      // console: console.log(item.querySelector("img"))
-    }))
-  }
-
   loadTexture(loader, url, index) {
     // https://threejs.org/docs/#api/en/loaders/TextureLoader
+
     return new Promise((resolve, reject) => {
       if (!url) {
         resolve({ texture: null, index })
