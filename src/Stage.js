@@ -11,6 +11,8 @@ export default class Stage {
       width: this.container.clientWidth,
       height: this.container.clientHeight,
     }
+    this.mouse = new THREE.Vector2()
+    this.mouseTargetPos = new THREE.Vector2()
 
     this.initialize()
   }
@@ -96,7 +98,7 @@ export default class Stage {
       uniforms: {
         sampler: { value: null },
         time: { value: 0 },
-        mousePos: { value: new THREE.Vector2(0, 0) },
+        mousePos: { value: this.mouse },
       },
       // vertex shader will be in charge of positioning our plane correctly
       vertexShader: postFXvertex,
@@ -105,62 +107,35 @@ export default class Stage {
     })
     this.postFXMesh = new THREE.Mesh(this.postFXGeometry, this.postFXMaterial)
     this.postFXScene.add(this.postFXMesh)
+  }
 
-    // Horizontal blur shader material
-    this.horizontalBlurMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        sampler: { value: null },
-        blurSize: { value: 1.0 / window.innerWidth }, // Adjust this value to control the blur amount
-      },
-      vertexShader: postFXvertex, // Reuse the vertex shader from your original setup
-      fragmentShader: horizontalBlurFragmentShader, // Replace with the actual shader code for horizontal blur
-    })
-
-    // Vertical blur shader material
-    this.verticalBlurMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        sampler: { value: null },
-        blurSize: { value: 1.0 / window.innerHeight }, // Adjust this value to control the blur amount
-      },
-      vertexShader: postFXvertex, // Reuse the vertex shader from your original setup
-      fragmentShader: verticalBlurFragmentShader, // Replace with the actual shader code for vertical blur
-    })
-
-    this.horizontalBlurMesh = new THREE.Mesh(this.postFXGeometry, this.horizontalBlurMaterial)
-    this.verticalBlurMesh = new THREE.Mesh(this.postFXGeometry, this.verticalBlurMaterial)
-
-    this.postFXScene.add(this.horizontalBlurMesh)
-    this.postFXScene.add(this.verticalBlurMesh)
+  updateMousePosition() {
+    const interpolationFactor = 0.001
+    this.mouse.x += (this.mouseTargetPos.x - this.mouse.x) * interpolationFactor
+    this.mouse.y += (this.mouseTargetPos.y - this.mouse.y) * interpolationFactor
   }
 
   render() {
     // called every frame
-    this.time += this.clock.getDelta() * this.timeSpeed
+    // this.time += this.clock.getDelta() * this.timeSpeed
+
+    // Update mouse position
+    this.updateMousePosition()
+    this.postFXMesh.material.uniforms.mousePos.value.copy(this.mouse)
+    this.postFXMesh.material.uniforms.time.value = this.clock.getElapsedTime()
+
     // Explicitly set renderBufferA as the framebuffer to render to
     this.renderer.autoClearColor = false
 
     this.renderer.setRenderTarget(this.renderBufferA)
-
+    // this.renderer.clearColor()
     this.renderer.render(this.postFXScene, this.camera)
     this.renderer.render(this.scene, this.camera)
 
-    // Render the horizontal blur pass to renderBufferB using the texture from renderBufferA
-    this.horizontalBlurMesh.material.uniforms.sampler.value = this.renderBufferA.texture
-    this.renderer.setRenderTarget(this.renderBufferB)
-    this.renderer.render(this.postFXScene, this.camera)
-    this.renderer.render(this.horizontalBlurMesh, this.camera)
-
-    // Render the vertical blur pass to the output framebuffer (null) using the texture from renderBufferB
-    this.verticalBlurMesh.material.uniforms.sampler.value = this.renderBufferB.texture
     this.renderer.setRenderTarget(null)
-    this.renderer.render(this.postFXScene, this.camera)
-    this.renderer.render(this.verticalBlurMesh, this.camera)
-
-    // Assign the generated texture to the sampler variable used
-    // in the postFXMesh that covers the device screen
     this.postFXMesh.material.uniforms.sampler.value = this.renderBufferA.texture
-
     this.renderer.render(this.postFXScene, this.camera)
+    this.renderer.render(this.scene, this.camera)
 
     // Ping-pong our framebuffers by swapping them
     // at the end of each frame render

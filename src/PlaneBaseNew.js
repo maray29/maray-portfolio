@@ -190,6 +190,7 @@ export default class PlaneBaseNew {
   }
 
   _onMouseMove(event) {
+    event.preventDefault()
     // get normalized mouse position on viewport
     this.mouse.x = (event.clientX / this.stage.viewSize.width) * 2 - 1
     this.mouse.y = -(event.clientY / this.stage.viewSize.height) * 2 + 1
@@ -200,7 +201,9 @@ export default class PlaneBaseNew {
     this.mouseNormal.x = event.clientX
     this.mouseNormal.y = event.clientY
 
-    this.stage.postFXMesh.material.uniforms.mousePos.value.set(this.mouse.x, this.mouse.y)
+    // this.stage.postFXMesh.material.uniforms.mousePos.value.set(this.mouse.x, this.mouse.y)
+    this.stage.mouseTargetPos.x = this.mouse.x
+    this.stage.mouseTargetPos.y = this.mouse.y
 
     this.onMouseMove(event)
   }

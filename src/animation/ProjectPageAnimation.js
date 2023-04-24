@@ -7,7 +7,11 @@ gsap.registerPlugin(ScrollTrigger)
 export default class ProjectPageAnimation {
   constructor() {}
 
-  initAnimations() {
+  initAnimationsOnPageLoad() {
     console.log('Initiating project page animations')
+  }
+
+  init() {
+    console.log('Init')
   }
 }

@@ -20,6 +20,7 @@ import { restartWebflow } from '@finsweet/ts-utils'
 
 import HomePageAnimation from './animation/HomePageAnimation.js'
 import ProjectPageAnimation from './animation/ProjectPageAnimation.js'
+import { doc } from 'prettier'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -63,12 +64,15 @@ class App {
     this.animateCursor(this.DOM.mouse.cursor1, 0.2)
     this.animateCursor(this.DOM.mouse.cursor2, 0.1)
 
-    this.homePageAnimation = new HomePageAnimation()
+    const container = document.querySelector('main')
+
+    this.homePageAnimation = new HomePageAnimation(container)
     this.projectPageAnimation = new ProjectPageAnimation()
 
     barba.init({
       views: [index, project],
-      transitions: [transition.homeToProject, transition.projectToHome],
+      // transitions: [transition.homeToProject, transition.projectToHome],
+      transitions: [transition.transitionHome, transition.transitionProject],
     })
 
     barba.hooks.beforeEnter(async () => {
@@ -81,12 +85,14 @@ class App {
 
     this.createLenis()
 
+    // Init animations on page load
     const currentPage = window.location.pathname
     if (currentPage === '/') {
-      this.homePageAnimation.initAnimations()
+      this.homePageAnimation.initAnimationsOnPageLoad()
     } else if (currentPage.startsWith('/project')) {
-      this.projectPageAnimation.initAnimations()
+      this.projectPageAnimation.initAnimationsOnPageLoad()
     }
+
     let htmlElement
 
     switch (currentPage) {
