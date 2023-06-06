@@ -1,5 +1,11 @@
 # @maray29/maray-portfolio
 
+## 0.2.0
+
+### Minor Changes
+
+- e8f17a9: Implement barbajs transitions.
+
 ## 0.1.0
 
 ### Minor Changes
