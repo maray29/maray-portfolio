@@ -9,44 +9,7 @@ const animationProjectEnter = () => {
   const projectNumber = document.querySelector('.project_number')
   const fadeInElements = [...document.querySelectorAll('[data-animation="fade-in"]')]
 
-  ScrollTrigger.refresh()
-
-  gsap.from(
-    projectHeading,
-    {
-      autoAlpha: 0,
-      scrollTrigger: {
-        trigger: projectHeading,
-        start: 'center 80%',
-        once: true,
-      },
-    },
-    'start'
-  )
-  gsap.from(
-    projectNumber,
-    {
-      autoAlpha: 0,
-      scrollTrigger: {
-        trigger: projectNumber,
-        start: 'center 80%',
-        once: true,
-      },
-    },
-    'start'
-  )
-
-  fadeInElements.forEach((element) => {
-    gsap.from(element, {
-      autoAlpha: 0,
-      stagger: 0.15,
-      scrollTrigger: {
-        trigger: element,
-        start: 'center 80%',
-        once: true,
-      },
-    })
-  })
+  // ScrollTrigger.refresh()
 }
 
 export default animationProjectEnter

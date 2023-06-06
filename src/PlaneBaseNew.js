@@ -34,8 +34,6 @@ export default class PlaneBaseNew {
 
     this.initialScale = 1.0
 
-    this.pageScrolledToEnd = false
-
     // this.currentItem = this.items[0]
 
     // setTimeout(() => {
@@ -157,24 +155,19 @@ export default class PlaneBaseNew {
   // }
 
   updateScrollValues(x, scrollY) {
-    if (!this.pageScrolledToEnd) {
-      this.newPosY =
-        this.initialPos.y +
-        (scrollY / this.document.scrollableHeight) *
-          (this.document.bodyHeight - this.document.windowHeight)
-    }
+    this.newPosY =
+      this.initialPos.y +
+      (scrollY / this.document.scrollableHeight) *
+        (this.document.bodyHeight - this.document.windowHeight)
 
     // Update the plane's Y position
     // if (!this.isMoving) this.plane.position.setY(this.newPosY)
 
-    if (!this.isMoving) {
+    if (!this.isMoving && this.plane) {
       gsap.to(this.plane.position, {
         y: this.newPosY,
         // overwrite: true,
         duration: 0.25,
-        // onComplete: () => {
-        //   console.log(this.plane.position)
-        // },
       })
     }
   }

@@ -7,13 +7,12 @@ const animationProjectLeave = (container, resolve) => {
   const tl = gsap.timeline({ onComplete: () => resolve() })
 
   tl.to(
-    APP.plane.uniforms.uAlpha,
+    APP.stage.currentPlane.mesh.material.uniforms.uAlpha,
     {
       value: 0,
       duration: 0.5,
       onComplete: () => {
-        APP.stage.scene.remove(APP.plane.mesh)
-        APP.plane = null
+        APP.stage.removeCurrentPlane()
       },
     },
     'start'

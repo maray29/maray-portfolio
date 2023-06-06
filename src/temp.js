@@ -315,7 +315,6 @@ export default class PlaneBase {
   get itemsElements() {
     // convert NodeList to Array
     const items = [...this.itemsWrapper.children]
-    console.log('🚀 ~ file: PlaneBase.js:313 ~ PlaneBase ~ getitemsElements ~ items:', items)
 
     //create Array of items including element, image and index
     return items.map((item, index) => ({

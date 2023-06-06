@@ -88,10 +88,10 @@ float snoise(vec3 v) {
 
 void main() {
     float a = snoise(vec3(vUv * 1.0, time * 0.2)) * 0.0032;
-    float b = snoise(vec3(vUv * 1.0, time * 0.2 + 100.0)) * 0.0032;
+    float b = snoise(vec3(vUv * 1.0, time * 0.2 + 1000.0)) * 0.0032;
 
     // Sample the correct color from the generated texture
     vec4 inputColor = texture2D(sampler, vUv + vec2(a, b) + mousePos * 0.0001);
     // Set the correct color of each pixel that makes up the plane
-    gl_FragColor = vec4(inputColor * 0.975);
+    gl_FragColor = vec4(inputColor * 0.955);
 }

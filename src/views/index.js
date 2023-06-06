@@ -1,19 +1,52 @@
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import PlaneHover from '../PlaneHover.js'
+import PlaneProject from '../PlaneProject.js'
 import { restartWebflow } from '@finsweet/ts-utils'
-import HomePageAnimation from '../animation/HomePageAnimation.js'
+
+// const APP = window.APP
 
 export const index = {
   namespace: 'home',
 
+  beforeLeave() {
+    // APP.homePageAnimation.killScrollTriggers()
+    console.log('Current Plane: ', APP.stage.currentPlane)
+  },
+
   beforeEnter() {
-    const projectsList = document.querySelector('.projects_list')
-    // Move this tween to transitions?
-    gsap.to(APP.stage.container, {
-      opacity: 1,
-    })
-    if (!APP.plane) {
-      APP.plane = new PlaneHover(projectsList, APP.stage, { strength: 0.35, transparent: true })
+    // if (!APP.isFirstLoad) {
+    //   gsap.to(APP.stage.container, {
+    //     opacity: 1,
+    //   })
+    // }
+  },
+  afterEnter() {
+    if (this.lenis) {
+      this.lenis.destroy()
     }
+    APP.createLenis()
+
+    const projectsList = document.querySelector('.home_projects')
+    APP.stage.initPlanes(projectsList)
+
+    if (APP.isFirstLoad) {
+      APP.homePageAnimation.initAnimationsOnPageLoad()
+    }
+
+    if (!APP.isFirstLoad) {
+      gsap.registerPlugin(ScrollTrigger)
+      ScrollTrigger.refresh()
+
+      APP.homePageAnimation.animateSectionHeadings()
+      APP.homePageAnimation.animateProcessText()
+      APP.homePageAnimation.animateParagraphs()
+      APP.homePageAnimation.animateFadeIn()
+
+      // APP.homePageAnimation.animateProgressDiagram()
+      // APP.homePageAnimation.createProgressDiagram()
+    }
+
+    APP.isFirstLoad = false
   },
 }

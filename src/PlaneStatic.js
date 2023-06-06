@@ -33,5 +33,11 @@ export default class PlaneStatic extends PlaneBaseNew {
   _setPlaneScale() {
     this.imgSize = this.currentItem.img.getBoundingClientRect()
     this.plane.scale.set(this.imgSize.width, this.imgSize.height, 1)
+
+    // this.plane.material.uniforms.scale
+    console.log(
+      '🚀 ~ file: PlaneStatic.js:39 ~ PlaneStatic ~ _setPlaneScale ~ this.plane.material.uniforms.scale:',
+      this.plane.material.uniforms.scale
+    )
   }
 }
